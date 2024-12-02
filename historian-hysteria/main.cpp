@@ -111,8 +111,8 @@ int calculate_distance(std::vector<int> const &first_list,
   return total;
 }
 
-int calculate_similarity_score(std::vector<int> const &first_list,
-                               std::vector<int> const &second_list) {
+int calculate_similarity_score(const std::vector<int> &first_list,
+                               const std::vector<int> &second_list) {
   int similarity_score{0};
 
   for (int number : first_list) {
