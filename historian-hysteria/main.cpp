@@ -1,8 +1,11 @@
 #include <cstddef>
 #include <cstdlib>
-#include <ctime>
+#include <fstream>
 #include <iostream>
 #include <ostream>
+#include <sstream>
+#include <stdexcept>
+#include <tuple>
 #include <vector>
 
 void merge(std::vector<int> &arr, size_t left, size_t middle, size_t rigth) {
@@ -12,10 +15,10 @@ void merge(std::vector<int> &arr, size_t left, size_t middle, size_t rigth) {
   std::vector<int> left_arr(n1);
   std::vector<int> rigth_arr(n2);
 
-  for (size_t i = 0; i <= n1; i++)
+  for (size_t i = 0; i < n1; i++)
     left_arr[i] = arr[left + i];
 
-  for (size_t i = 0; i <= n2; i++)
+  for (size_t i = 0; i < n2; i++)
     rigth_arr[i] = arr[middle + 1 + i];
 
   size_t i = 0, j = 0, k = left;
@@ -67,15 +70,29 @@ void display_lists(std::vector<int> const &first_list,
   std::cout << std::endl;
 }
 
-int get_random_number() { return std::rand() % 10 + 1; }
+std::tuple<std::vector<int>, std::vector<int>>
+get_location_ids_lists(std::string path) {
+  std::ifstream file(path);
+  if (!file) {
+    throw std::runtime_error("error to load input");
+  }
 
-std::vector<int> get_location_ids_random(int length) {
-  std::vector<int> location_ids{};
+  std::vector<int> first_list{};
+  std::vector<int> second_list{};
 
-  for (size_t i = 0; i < length; i++)
-    location_ids.push_back(get_random_number());
+  std::string line;
 
-  return location_ids;
+  while (std::getline(file, line)) {
+    std::stringstream ss(line);
+    int first_number{0};
+    int second_number{0};
+    ss >> first_number >> second_number;
+
+    first_list.push_back(first_number);
+    second_list.push_back(second_number);
+  }
+
+  return std::make_tuple(first_list, second_list);
 };
 
 int calculate_distance(std::vector<int> const &first_list,
@@ -93,15 +110,21 @@ int calculate_distance(std::vector<int> const &first_list,
   return total;
 }
 
-int main() {
-  std::srand(std::time(0));
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    std::cerr << "error: no input as found in parameters";
 
-  int number_of_ids = get_random_number();
+    return 1;
+  }
 
-  std::vector<int> first_list_os_ids = get_location_ids_random(number_of_ids);
-  std::vector<int> second_list_of_ids = get_location_ids_random(number_of_ids);
+  std::string path = argv[1];
+
+  auto [first_list_os_ids, second_list_of_ids] = get_location_ids_lists(path);
 
   display_lists(first_list_os_ids, second_list_of_ids);
+
+  std::cout << first_list_os_ids.size() << " " << second_list_of_ids.size()
+            << std::endl;
 
   merge_sort(first_list_os_ids, 0, first_list_os_ids.size() - 1);
   merge_sort(second_list_of_ids, 0, second_list_of_ids.size() - 1);
