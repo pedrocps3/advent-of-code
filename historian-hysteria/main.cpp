@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
@@ -110,6 +111,36 @@ int calculate_distance(std::vector<int> const &first_list,
   return total;
 }
 
+int calculate_similarity_score(std::vector<int> const &first_list,
+                               std::vector<int> const &second_list) {
+  int similarity_score{0};
+
+  for (int number : first_list) {
+    int similary_count =
+        std::count(second_list.begin(), second_list.end(), number);
+
+    similarity_score += similary_count * number;
+  }
+
+  return similarity_score;
+}
+
+void solve_part_one(const std::vector<int> &first_list,
+                    const std::vector<int> &second_list) {
+  std::cout << "Resolution part one: \n" << std::endl;
+
+  std::cout << "total distance is: "
+            << calculate_distance(first_list, second_list) << std::endl;
+}
+
+void solve_part_two(const std::vector<int> &first_list,
+                    const std::vector<int> &second_list) {
+  std::cout << "Resolution part two: \n" << std::endl;
+
+  std::cout << "similarity score is: "
+            << calculate_similarity_score(first_list, second_list) << std::endl;
+}
+
 int main(int argc, char *argv[]) {
   if (argc < 2) {
     std::cerr << "error: no input as found in parameters";
@@ -129,9 +160,8 @@ int main(int argc, char *argv[]) {
   merge_sort(first_list_os_ids, 0, first_list_os_ids.size() - 1);
   merge_sort(second_list_of_ids, 0, second_list_of_ids.size() - 1);
 
-  std::cout << "total distance is: "
-            << calculate_distance(first_list_os_ids, second_list_of_ids)
-            << std::endl;
+  solve_part_one(first_list_os_ids, second_list_of_ids);
+  solve_part_two(first_list_os_ids, second_list_of_ids);
 
   return 0;
 }
